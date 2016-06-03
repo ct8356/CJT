@@ -1,0 +1,5 @@
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\obj\Debug\CJT.csprojResolveAssemblyReference.cache
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\bin\Debug\CJT.dll
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\bin\Debug\CJT.pdb
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\obj\Debug\CJT.dll
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\obj\Debug\CJT.pdb
