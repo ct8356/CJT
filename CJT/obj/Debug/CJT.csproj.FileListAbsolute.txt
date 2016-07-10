@@ -3,3 +3,6 @@ C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\bin\Debug\CJ
 C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\bin\Debug\CJT.pdb
 C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\obj\Debug\CJT.dll
 C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\obj\Debug\CJT.pdb
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\bin\Debug\System.Windows.Controls.Input.Toolkit.dll
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\bin\Debug\System.Windows.Controls.Layout.Toolkit.dll
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJT\bin\Debug\WPFToolkit.dll

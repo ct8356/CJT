@@ -10,11 +10,22 @@ using System.IO;
 using DataTable = System.Data.DataTable;
 
 namespace CJT {
-    public abstract class ExcelContext {
+    public class ExcelContext {
         public event EventHandler TransactionTableChanged;
         public string FilePath { get; set; }
 
-        public abstract string GetConnectionString();
+        public ExcelContext() {
+            FilePath =
+            "C:\\Users\\CJT\\OneDrive\\Documents\\ElectricalCupboard\\ElectricalCupboardContents.xlsx";
+        }
+
+        public virtual string GetConnectionString() {
+            return string.Format(
+                //"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};"+
+                //"Extended Properties='Excel 12.0;HDR=YES;IMEX=1;'",
+                "Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=Excel 12.0;",
+                FilePath);
+        }
 
         //public ICollection<T> GetCollection<T>(string commandText, string searchBar) {
         //    ICollection<T> collection;
@@ -35,6 +46,20 @@ namespace CJT {
         //    return collection;
         //}
 
+        public DataTable GetDataTable(string commandText) {
+            using (OleDbCommand cmd = new OleDbCommand()) {
+                cmd.CommandText = commandText;
+                using (OleDbConnection conn = new OleDbConnection(GetConnectionString())) {
+                    cmd.Connection = conn;
+                    conn.Open();
+                    OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+                    return table;
+                }
+            }
+        }
+
         public DataTable GetDataTable(string commandText, string searchBar) {
             using (OleDbCommand cmd = new OleDbCommand()) {
                 OleDbParameter searchBarParam = new OleDbParameter("searchBar", "%" + searchBar + "%");//Note; can specify data type if want to.
@@ -49,6 +74,41 @@ namespace CJT {
                     DataTable table = new DataTable();
                     adapter.Fill(table);
                     return table;
+                }
+            }
+        }
+
+        public DataTable GetDataTable(string commandText, string[] columnNames, string[] values) {
+            using (OleDbCommand cmd = new OleDbCommand()) {
+                for (int col = 0; col < columnNames.Length; col++) {
+                    cmd.Parameters.AddWithValue(columnNames[col], values[col]);
+                }
+                cmd.CommandText = commandText;
+                using (OleDbConnection conn = new OleDbConnection(GetConnectionString())) {
+                    cmd.Connection = conn;
+                    conn.Open();
+                    OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+                    //NOTE: adapter is for linking DataSet (returned from query?) to DataSource (the DataTable that bind to?)
+                    //Not sure about this though.
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+                    return table;
+                }
+            }
+        }
+
+        public int InsertEntry(string commandText, string[] columnNames, string[] values) {
+            using (OleDbCommand cmd = new OleDbCommand()) {
+                for (int col = 0; col < columnNames.Length; col++) {
+                    cmd.Parameters.AddWithValue(columnNames[col], values[col]);
+                }
+                cmd.CommandText = commandText;
+                using (OleDbConnection conn = new OleDbConnection(GetConnectionString())) {
+                    cmd.Connection = conn;
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    TransactionTableChanged(this, new EventArgs());
+                    return rowsAffected;
                 }
             }
         }

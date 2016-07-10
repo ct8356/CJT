@@ -10,9 +10,8 @@ namespace CJT {
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void NotifyPropertyChanged(String propertyName) {
-            if (PropertyChanged != null) {
+            if (PropertyChanged != null) 
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
 
     }
