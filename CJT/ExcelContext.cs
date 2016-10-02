@@ -10,7 +10,7 @@ using System.IO;
 using DataTable = System.Data.DataTable;
 
 namespace CJT {
-    public class ExcelContext {
+    public class ExcelContext : CJT.DbContext {
         public event EventHandler TransactionTableChanged;
         public string FilePath { get; set; }
 
@@ -19,7 +19,7 @@ namespace CJT {
             "C:\\Users\\CJT\\OneDrive\\Documents\\ElectricalCupboard\\ElectricalCupboardContents.xlsx";
         }
 
-        public virtual string GetConnectionString() {
+        public override string GetConnectionString() {
             return string.Format(
                 //"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};"+
                 //"Extended Properties='Excel 12.0;HDR=YES;IMEX=1;'",
@@ -46,7 +46,7 @@ namespace CJT {
         //    return collection;
         //}
 
-        public DataTable GetDataTable(string commandText) {
+        public override DataTable GetDataTable(string commandText) {
             using (OleDbCommand cmd = new OleDbCommand()) {
                 cmd.CommandText = commandText;
                 using (OleDbConnection conn = new OleDbConnection(GetConnectionString())) {
@@ -60,7 +60,7 @@ namespace CJT {
             }
         }
 
-        public DataTable GetDataTable(string commandText, string searchBar) {
+        public override DataTable GetDataTable(string commandText, string searchBar) {
             using (OleDbCommand cmd = new OleDbCommand()) {
                 OleDbParameter searchBarParam = new OleDbParameter("searchBar", "%" + searchBar + "%");//Note; can specify data type if want to.
                 cmd.Parameters.Add(searchBarParam);
@@ -78,7 +78,25 @@ namespace CJT {
             }
         }
 
-        public DataTable GetDataTable(string commandText, string[] columnNames, string[] values) {
+        public override DataTable GetDataTable(string commandText, string searchBar, string filePath) {
+            using (OleDbCommand cmd = new OleDbCommand()) {
+                OleDbParameter searchBarParam = new OleDbParameter("searchBar", "%" + searchBar + "%");//Note; can specify data type if want to.
+                cmd.Parameters.Add(searchBarParam);
+                cmd.CommandText = commandText; //@ not working!
+                using (OleDbConnection conn = new OleDbConnection(GetConnectionString(filePath))) {
+                    cmd.Connection = conn;
+                    conn.Open();
+                    OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+                    //NOTE: adapter is for linking DataSet (returned from query?) to DataSource (the DataTable that bind to?)
+                    //Not sure about this though.
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+                    return table;
+                }
+            }
+        }
+
+        public override DataTable GetDataTable(string commandText, string[] columnNames, string[] values) {
             using (OleDbCommand cmd = new OleDbCommand()) {
                 for (int col = 0; col < columnNames.Length; col++) {
                     cmd.Parameters.AddWithValue(columnNames[col], values[col]);
@@ -97,7 +115,7 @@ namespace CJT {
             }
         }
 
-        public int InsertEntry(string commandText, string[] columnNames, string[] values) {
+        public override int InsertEntry(string commandText, string[] columnNames, string[] values) {
             using (OleDbCommand cmd = new OleDbCommand()) {
                 for (int col = 0; col < columnNames.Length; col++) {
                     cmd.Parameters.AddWithValue(columnNames[col], values[col]);
@@ -131,6 +149,10 @@ namespace CJT {
             //cmd.Connection = myConn;
             //cmd.CommandText = "CREATE TABLE [table1] (id INT, name VARCHAR, datecol DATE );";
             //cmd.ExecuteNonQuery();
+        }
+
+        public override void SaveSettings() {
+            //do nothing
         }
 
     }

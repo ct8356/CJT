@@ -14,7 +14,9 @@ namespace CJT {
         //BUT since TextBlock SO common, putting CJT infront is probs easier.
 
         public TextBlock() {
-            Margin = new Thickness(4);
-        } 
+            Margin = new Thickness(0);
+            Padding = new Thickness(4);
+        }
+
     }
 }

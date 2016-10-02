@@ -12,7 +12,8 @@ using System.Windows.Data;
 
 namespace CJT {
     public class CustomBoundColumn : DataGridBoundColumn {
-        public string TemplateName { get; set; }
+        //Probs won't need to use this class.
+        //Problem is, it goes funny if you have a scroll bar on the table.
         public DataTable DataTable { get; set; }
 
         protected override FrameworkElement GenerateElement(DataGridCell cell, object dataItem) {
@@ -22,7 +23,21 @@ namespace CJT {
             var textBlock = new TextBlock();
             textBlock.SetBinding(TextBlock.TextProperty, binding);
             return textBlock;
-        }
+        } //PROBLEM MUST BE HERE???? must be to do with dataItem passed!
+        //What is a DataRowView? Is it part of DataTable? Yes its the view of a row in a DataTable.
+        //As expected really. So the textBlock should stay connected TO THAT ROW!. But it does not. WHY?
+        //OK, so this GenerateElement method, is done corrrectly I think (similar to many others online).
+        //BUT it just really cant handle scrolling! 
+        //SO could spend hours figuring out why,
+        //OR could just use NON-editable ComboBoxes, (or not comboboxes at all, probs best),
+        //YES DUH! Should really just edit in EXCEL if need to!
+        //BUT if gonna evolve to SQL, probs best to have facility to edit.
+        //SO first of all, IN SQL, transactions should reference a PART CLASS! Quicker editing).
+        //TBH, that is only instance would want to edit MULTIPLE rows all at once. YES!
+        //SO rest of edits, could be done with ComboBoxes, and then right click to add new option!
+        //I like it! BUT it needs to be EDITABLE to allow TYPING! yes TRUE!
+        //FUD! BUT cause only want to edit ONE at a time, can RIGHT CLICK IT, to edit it!
+        //YEAH WHY NOT! GET THIS BAD BOY DONE! LIKE RICH WOULD LIKE IT! DONE QUICK!
 
         protected override FrameworkElement GenerateEditingElement(DataGridCell cell, object dataItem) {
             string path = (Binding as Binding).Path.Path;

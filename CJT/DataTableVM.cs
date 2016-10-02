@@ -1,53 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
-using CJT;
-using System.Windows.Controls;
-using System.Windows;
+using CJT.Models;
 
 namespace CJT {
-    public class DataTableVM : BaseClass {
-        protected ExcelContext ExcelContext { get; set; }
-        public delegate void MessageEventHandler(object sender, MessageEventArgs e);
-        public event MessageEventHandler ShowMessageEvent;
-        public string CommandText;
-
-        private DataTable dataTable;
-        public DataTable DataTable {
-            get { return dataTable; }
-            set { dataTable = value;
-                //NotifyPropertyChanged("DataTable");
-            }
-        }
-
-        public string FileName = "ElectricalCupboardContents";
+    public class DataTableVM : DataListVM, IDataTableVM {
+        public DataTable DataTable { get; set; }
+        public string CommandText { get; set; }
+        public string FileName { get; set; }// = "ElectricalCupboardContents";
         public string FilePath { get; set; }
-
-        private int currentSelection;
-        public int CurrentSelection {
-            get { return currentSelection; }
-            set { currentSelection = value; NotifyPropertyChanged("CurrentSelection"); }
-        }
-
+        public string TableName { get; set; }
         private DataRow selectedItem;
         public DataRow SelectedItem {
             get { return selectedItem; }
             set { selectedItem = value; NotifyPropertyChanged("SelectedItem"); }
         }
 
-        public void Search(string searchBar) {
-            UpdateDataTable(searchBar);
+        public override IList<Entry> GetDataList(string searchString) {
+            return null;
         }
 
-        public void ShowMessage(string message) {
-            ShowMessageEvent(this, new MessageEventArgs(message));
+        public override void UpdateDataList() {
+            DataTable = DbContext.GetDataTable(CommandText, "", FilePath);
         }
 
-        public void UpdateDataTable(string searchBar) {
-            DataTable = ExcelContext.GetDataTable(CommandText, searchBar);
+        public override void UpdateDataList(string search) {
+            DataTable = DbContext.GetDataTable(CommandText, search);
         }
 
     }

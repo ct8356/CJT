@@ -15,6 +15,7 @@ namespace CJT {
 
         public AutoCompleteBox() {
             BorderBrush = new SolidColorBrush(Colors.LightGray);
+            Background = new SolidColorBrush(Colors.LightGray);
             IsTextCompletionEnabled = true;
             //SUBSCRIBE
             KeyUp += This_KeyUp;
@@ -28,7 +29,7 @@ namespace CJT {
 
         public void This_SelectionChanged(object sender, EventArgs e) {
             AutoCompleteBox autoCompleteBox = (AutoCompleteBox)sender;
-            (DataContext as INotifyInputConfirmed).NotifyInputConfirmed(autoCompleteBox.SelectedItem);
+            (DataContext as INotifyInputConfirmed).NotifyInputConfirmed(autoCompleteBox.Text);
             //NOTE: You make your life WAY easier, if you just specify the INTERFACE for the DataContext!
             //(ItemsSource as List<Entry>).Add(autoCompleteBox.SelectedItem as Entry); //do this in VM? the DataContext?
             //MAYBE, but maybe easier to do it straight to ItemSource, since KNOW it is a list?

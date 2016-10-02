@@ -8,3 +8,5 @@ C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJTTests\bin\Deb
 C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJTTests\obj\Debug\CJTTests.csprojResolveAssemblyReference.cache
 C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJTTests\obj\Debug\CJTTests.dll
 C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJTTests\obj\Debug\CJTTests.pdb
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJTTests\bin\Debug\EntityFramework.dll
+C:\Users\CJT\OneDrive\Documents\Visual Studio 2010\Projects\CJT\CJTTests\bin\Debug\EntityFramework.xml

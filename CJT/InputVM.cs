@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using CJT.Models;
 
 namespace CJT {
     public class InputVM<T> : BaseClass, INotifyInputConfirmed where T : Entry {
@@ -28,7 +29,10 @@ namespace CJT {
             InputConfirmed += This_InputConfirmed;
         }
 
-        public void NotifyInputConfirmed(object input) {
+        public void NotifyInputConfirmed(string input) {
+            //NOTE: I think it IS correct to take a string at this point...
+            //BECAUSE want to be able to do comparisons BEFORE creating a new object!
+            //BUT REVISIT! Since this will take some work.
             InputConfirmed(this, new ObjectEventArgs<T>(input as T));
         }//YES! JUST NotifyInputConfirmed in this method.
         //THEN if want to do other stuff after, do it in RESPONSE to this!

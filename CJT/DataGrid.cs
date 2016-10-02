@@ -10,6 +10,8 @@ using System.Windows.Data;
 
 namespace CJT {
     public class DataGrid : System.Windows.Controls.DataGrid {
+        //PROBS don't need to use this class. The CustomBoundColumn bit
+        //cant handle scroll bars for some reason!
         public bool IsSourceTable { get; set; }
 
         public DataGrid() {
@@ -24,15 +26,14 @@ namespace CJT {
 
         public void AddColumnsFromDataTable() {
             if (Columns.Count == 0) {
-                var columnNames = (DataContext as DataTableVM).DataTable.Columns
+                string[] columnNames = (DataContext as DataTableVM).DataTable.Columns
                     .Cast<DataColumn>().Select(x => x.ColumnName).ToArray();
-                foreach (var columnName in columnNames) {
-                    var binding = new Binding(columnName);
+                foreach (string columnName in columnNames) {
+                    Binding binding = new Binding(columnName);
                     Columns.Add(new CustomBoundColumn() {
                         Header = columnName,
                         Binding = binding,
-                        //TemplateName = "ComboBoxDataTemplate",
-                        TemplateName = "CustomDataTemplate",
+                        //TemplateName = "CustomDataTemplate",
                         DataTable = (DataContext as DataTableVM).DataTable
                     }); //MY GUESS is, that because adding columns manually, 
                     //the original binding is lost.
@@ -44,7 +45,8 @@ namespace CJT {
         }
 
         public virtual void this_Loaded(object sender, EventArgs e) {
-            AddColumnsFromDataTable();
+            //AddColumnsFromDataTable(); //Not the issue.
+            //Don't need to do this now thanks to EditableComboBox class?
         }
 
         public void this_SelectionChanged(object sender, EventArgs e) {
