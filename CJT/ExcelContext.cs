@@ -2,17 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 //using Microsoft.Office.Interop.Excel; //using Excel = ....  useful
 using System.Data.OleDb;
 using System.Data;
 using System.IO;
 using DataTable = System.Data.DataTable;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using CJT.Models;
 
 namespace CJT {
     public class ExcelContext : CJT.DbContext {
-        public event EventHandler TransactionTableChanged;
-        public string FilePath { get; set; }
+        private DbSet<Entry> entries;
+        public override DbSet<Entry> Entries {
+            get { return entries; } //NEED to get DataTable and convert it to DbSet here.
+            set { entries = value; }
+        }
+
+        public override DbSet<Note> Notes { get; set; }
+        public override DbSet<Task> Tasks { get; set; }
+        public override DbSet<Tag> Tags { get; set; }
+        public override DbSet<Transaction> Transactions { get; set; }
+        public override DbSet<PartClass> Parts { get; set; }
+        public override DbSet<PartInstance> PartInstances { get; set; }
 
         public ExcelContext() {
             FilePath =
@@ -125,7 +137,23 @@ namespace CJT {
                     cmd.Connection = conn;
                     conn.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
-                    TransactionTableChanged(this, new EventArgs());
+                    NotifyTableChanged();
+                    return rowsAffected;
+                }
+            }
+        }
+
+        public int UpdateEntry(string commandText, string[] columnNames, string[] values) {
+            using (OleDbCommand cmd = new OleDbCommand()) {
+                for (int col = 0; col < columnNames.Length; col++) {
+                    cmd.Parameters.AddWithValue(columnNames[col], values[col]);
+                }
+                cmd.CommandText = commandText;
+                using (OleDbConnection conn = new OleDbConnection(GetConnectionString())) {
+                    cmd.Connection = conn;
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    NotifyTableChanged();
                     return rowsAffected;
                 }
             }

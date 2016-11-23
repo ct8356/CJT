@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace CJT {
-    class ComboBoxVM<T> : BaseClass {
+    public class GenericComboBoxVM<T> : BaseClass {
         //NOTE: Could rename this to something more generic.
         //So that AutoCompleteBox and others could also use it as DataContext.
         //INFACT, could make THIS just a GROUPING class.

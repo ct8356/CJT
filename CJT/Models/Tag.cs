@@ -8,6 +8,9 @@ namespace CJT.Models {
         //because then you can cast objects into type T in generic classes.
         //[DatabaseGenerated(DatabaseGeneratedOption.None)] //?? CBTL? important?
 
+        //If you find yourself using more than 3 or 4 tags for one entry,
+        //you should think about making a new property for that entry.
+
         public virtual ICollection<Entry> Entries { get; set; }
 
         public Tag() : base() {

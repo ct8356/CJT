@@ -11,7 +11,16 @@ using CJT.Models;
 
 namespace CJT {
     public abstract class DbContext : System.Data.Entity.DbContext {
-        public event EventHandler TransactionTableChanged;
+        //NOTE: you SHOULD dispose of Context when no longer required (i.e. use using(){}).
+        public event EventHandler TableChanged;
+        public abstract DbSet<Entry> Entries { get; set; }
+        public abstract DbSet<Note> Notes { get; set; }
+        public abstract DbSet<Task> Tasks { get; set; }
+        public abstract DbSet<Tag> Tags { get; set; }
+        public abstract DbSet<Transaction> Transactions { get; set; }
+        public abstract DbSet<PartClass> Parts { get; set; }
+        public abstract DbSet<PartInstance> PartInstances { get; set; }
+        public string FilePath { get; set; }
 
         public abstract string GetConnectionString();
 
@@ -44,7 +53,15 @@ namespace CJT {
 
         public abstract int InsertEntry(string command, string[] a, string[] b);
 
+        protected void NotifyTableChanged() {
+            TableChanged(this, new EventArgs());
+        }
+
         public abstract void SaveSettings();
+
+        public virtual void SaveChanges(object sender) {
+            SaveChanges();
+        }
 
     }
 }

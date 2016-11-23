@@ -12,7 +12,7 @@ namespace CJT {
         string CommandText { get; set; }
         string FileName { get; set; }
         string FilePath { get; set; }
-        DataRow SelectedItem { get; set; }
+        DataRow SelectedRow { get; set; }
 
     }
 }

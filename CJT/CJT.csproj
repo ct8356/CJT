@@ -65,14 +65,28 @@
   <ItemGroup>
     <Compile Include="AutoCompleteBox.cs" />
     <Compile Include="BaseClass.cs" />
-    <Compile Include="ComboBoxVM.cs" />
-    <Compile Include="CustomBoundColumn.cs" />
     <Compile Include="DataGrid.cs" />
+    <Compile Include="EFContext.cs" />
+    <Compile Include="GenericComboBoxVM.cs" />
+    <Compile Include="CustomBoundColumn.cs" />
+    <Compile Include="DataTableGrid.cs" />
     <Compile Include="DataListVM.cs" />
     <Compile Include="DataTableVM.cs" />
     <Compile Include="DbContext.cs" />
     <Compile Include="EditableComboBox.cs" />
+    <Compile Include="IMainVM.cs" />
+    <Compile Include="InfoType.cs" />
+    <Compile Include="ITreeVM.cs" />
+    <Compile Include="Models\Note.cs" />
+    <Compile Include="ViewModels\NoteVM.cs" />
+    <Compile Include="ViewModels\TagVM.cs" />
+    <Compile Include="ViewModels\PartInstanceVM.cs" />
+    <Compile Include="Property.cs" />
+    <Compile Include="ViewModels\ComboBoxVM.cs" />
+    <Compile Include="ViewModels\EntriesTreeVM.cs" />
+    <Compile Include="ViewModels\EntryVM.cs" />
     <Compile Include="IDataTableVM.cs" />
+    <Compile Include="Models\Content.cs" />
     <Compile Include="Models\Entry.cs" />
     <Compile Include="ExcelContext.cs" />
     <Compile Include="IListVM.cs" />
@@ -88,7 +102,14 @@
     <Compile Include="ObjectEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Tag.cs" />
+    <Compile Include="PropertyPanel.cs" />
     <Compile Include="TextBlock.cs" />
+    <Compile Include="ViewModels\ListBoxPanelVM.cs" />
+    <Compile Include="ViewModels\MainVM.cs" />
+    <Compile Include="ViewModels\OptionsPanelVM.cs" />
+    <Compile Include="ViewModels\PartClassVM.cs" />
+    <Compile Include="ViewModels\TaskVM.cs" />
+    <Compile Include="ViewModels\TransactionVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

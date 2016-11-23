@@ -9,7 +9,7 @@ namespace CJT {
     public class BaseClass : INotifyPropertyChanged { //NOTE: Don't forget INotify, or it wont work!
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void NotifyPropertyChanged(String propertyName) {
+        protected void NotifyPropertyChanged(string propertyName) {
             if (PropertyChanged != null) 
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }

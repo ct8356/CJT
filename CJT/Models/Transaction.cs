@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CJT.Models {
     public class Transaction : Entry {
 
-        public virtual PartClass PartClass { get; set; }
+        public virtual Content Content { get; set; }
 
         int quantity = 0;
         public int Quantity {
@@ -15,16 +15,20 @@ namespace CJT.Models {
             set { quantity = value; NotifyPropertyChanged("Quantity"); }
         }
 
-        string location = "Undefined";
-        public string Location {
-            get { return location; }
-            set { location = value; NotifyPropertyChanged("Location"); }
+        private DateTime dateMade;
+        public DateTime DateMade {
+            get { return dateMade; }
+            set { dateMade = value; NotifyPropertyChanged("DateMade"); }
         }
 
-        string condition = "Undefined";
-        public string Condition {
-            get { return condition; }
-            set { condition = value; NotifyPropertyChanged("Condition"); }
+        private int jobNumber;
+        public int JobNumber {
+            get { return jobNumber; }
+            set { jobNumber = value; NotifyPropertyChanged("JobNumber"); }
+        }
+
+        public Transaction() {
+            Content = new Content();
         }
 
     }

@@ -27,7 +27,10 @@ namespace CJT.Models {
         string orderNumber = "Undefined";
         public string OrderNumber {
             get { return orderNumber; }
-            set { orderNumber = value; NotifyPropertyChanged("OrderNumber"); }
+            set {
+                orderNumber = value;
+                NotifyPropertyChanged("OrderNumber");
+            }
         }
 
         string description = "Undefined";
