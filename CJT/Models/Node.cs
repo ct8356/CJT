@@ -5,20 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CJT.Models {
-    public class Note : Entry {
+    public class Node : Entry {
 
         public virtual ICollection<Entry> Entries { get; set; }
 
-        public Note() : base() {
-            Type = "PowerNote.Models.Note";
+        public Node() : base() {
+            Type = "PowerNote.Models.Node";
         }
 
-        public Note(string contents) : this() {
+        public Node(string contents) : this() {
             Name = contents;
-        }
-
-        public Note(string contents, Tag tag) : this(contents) {
-            Tags.Add(tag);
         }
 
     }

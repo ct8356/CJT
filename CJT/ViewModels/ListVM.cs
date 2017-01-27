@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Windows.Data;
 using CJT.Models;
 
-namespace CJT {
+namespace CJT.ViewModels {
     public class ListVM<T> : BaseClass, IListVM where T : Entry {
         //NOTE, this class is not really necessary?
 

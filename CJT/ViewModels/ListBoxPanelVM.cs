@@ -20,6 +20,8 @@ namespace CJT.ViewModels {
         public EntryVM EntryVM { get; set; }
         public DbContext DbContext { get; set; }
         public DbSet<T> DbSet { get; set; }
+        public string RelationName { get; set; }
+        public int RelationNumber { get; set; } //1 for parents, 2 for children
         private ObservableCollection<T> selectableItems;
         public ObservableCollection<T> SelectableItems {
             get { return selectableItems; }
@@ -47,7 +49,7 @@ namespace CJT.ViewModels {
             SelectedItems = new ObservableCollection<T>();
             EntryVM = VM;
             MainVM = VM.TreeVM.ParentVM;
-            DbContext = VM.DbContext;
+            DbContext = MainVM.DbContext;
             ChooseCorrectDbSet();
             //SUBSCRIBE
             InputConfirmed += This_InputConfirmed;
@@ -59,13 +61,17 @@ namespace CJT.ViewModels {
             SelectedItems = list;
         }
 
+        public ListBoxPanelVM(EntryVM VM, ObservableCollection<T> list, string relationName, int relationNumber) 
+            : this(VM, list) {
+            SelectedItems = list;
+            RelationName = relationName;
+            RelationNumber = relationNumber;
+        }
+
         public void AddNewItem(string text) {
-            T newItem = new T();
+            Node newItem = new Node(text); //REVISIT: could just create the NodeVM here, then added to DBSet automatically!
             //HEY WOW! THOUGHT it was a real problem that I could not pass arguments to contruct.
             //BUT IS IT? COuld you get away with setting properties afterwards? REVISIT
-            newItem.Name = text;
-            SelectableItems.Add(newItem);
-            //Add to DB
             ChooseCorrectDbSet();
             DbSet.Add(newItem as T);
             DbContext.SaveChanges();
@@ -73,11 +79,22 @@ namespace CJT.ViewModels {
 
         public void AddItem(string name) {
             ChooseCorrectDbSet();
-            T entry = DbSet.Where(e => e.Name == name).First();
-            SelectedItems.Add(entry);
+            T entry = DbSet.Where(e => e.Name == name).FirstOrDefault();
+            SelectedItems.Add(entry); //THIS should get updated on refresh anyway...
             //FIRE an event... or not.... use NotifyPropChanged?
             //ACTUALLY, FOR better DISTRIBUTION,
             //BETTER if this class just calls TreeVM to update itself!
+            //AHH NOTE, here is bit where must create a relation!
+            RelationshipVM rvm = new RelationshipVM(RelationName, MainVM.SelectedEntryVM.TreeVM); //This adds it to DB.
+            if (RelationNumber == 1) { //IF this list of relations are parents,
+                (rvm.Entry as Relationship).ParentEntry = entry;
+                (rvm.Entry as Relationship).ChildEntry = MainVM.SelectedEntryVM.Entry;
+            }
+            else if (RelationNumber == 2) {
+                (rvm.Entry as Relationship).ParentEntry = MainVM.SelectedEntryVM.Entry;
+                (rvm.Entry as Relationship).ChildEntry = entry;
+            }
+            //FINALLY
             DbContext.SaveChanges();
             MainVM.UpdateEntries();//bad, because deletes all entryVMs?
             //(sender as AutoCompleteBox).Text = null;
@@ -88,14 +105,10 @@ namespace CJT.ViewModels {
                 DbSet = DbContext.Entries as DbSet<T>;
             //WHAT? Why is this allowed? Maybe its allowed, but wont actually work in runtime?
             //AH MAYBE IT DOES WORK, if Ts actually Match!!! COOL! REVISIT
-            if (typeof(T) == typeof(PartClass))
-                DbSet = DbContext.Parts as DbSet<T>;
-            if (typeof(T) == typeof(PartInstance))
-                DbSet = DbContext.PartInstances as DbSet<T>;
-            if (typeof(T) == typeof(Task))
-                DbSet = DbContext.Tasks as DbSet<T>;
-            if (typeof(T) == typeof(Tag))
-                DbSet = DbContext.Tags as DbSet<T>;
+            if (typeof(T) == typeof(Node))
+                DbSet = DbContext.Nodes as DbSet<T>;
+            if (typeof(T) == typeof(Relationship))
+                DbSet = DbContext.Relationships as DbSet<T>;
         }
 
         public void NotifyInputConfirmed(string input) {
@@ -120,8 +133,12 @@ namespace CJT.ViewModels {
         //REVISIT CURRENT!
 
         public void This_InputConfirmed(object sender, MessageEventArgs args) {
-            if (!SelectableItems.Any(n => n.Name == args.Message)) {
-                AddNewItem(args.Message);
+            if (!DbContext.Entries.Any(en => en.Name == args.Message)) {
+                AddNewItem(args.Message); //REVISIT! Does it still add new entries to list?
+                //NOTE YO! these comparisons, SEEM TO NOT WORK!
+                //OFTEN IS ONE IN THERE,
+                //AND YET STILL it makes a new one!
+            //MAYBE, its just coz selectableItems is not uptodate?
             }
             if (!SelectedItems.Any(e => e.Name == args.Message)) {
                 //HEYHEY! It seems like when you create an entry,

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CJT.Models;
-using CJT.ViewModels;
+using CJT;
 
-namespace CJT {
+namespace CJT.ViewModels {
     public interface IMainVM {
 
-        EFContext DbContext { get; set; }
+        DbContext DbContext { get; set; }
 
         EntryVM SelectedEntryVM { get; set; }
 

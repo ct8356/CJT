@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CJT.Models;
-using CJT.ViewModels;
+using CJT;
 using System.Collections.ObjectModel;
 
-namespace CJT {
+namespace CJT.ViewModels {
     public interface ITreeVM {
 
         DbContext DbContext { get; set; }
 
-        ObservableCollection<Tag> AllTags { get; set; }
+        ComboBoxVM TypePanelVM { get; set; }
 
-        ListBoxPanelVM<Tag> FilterPanelVM { get; set; }
+        ComboBoxVM StructurePanelVM { get; set; }
 
         ObservableCollection<EntryVM> FirstGenEntryVMs { get; set; }
 

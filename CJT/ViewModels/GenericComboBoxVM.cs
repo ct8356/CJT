@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace CJT {
+namespace CJT.ViewModels {
     public class GenericComboBoxVM<T> : BaseClass {
         //NOTE: Could rename this to something more generic.
         //So that AutoCompleteBox and others could also use it as DataContext.

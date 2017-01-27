@@ -18,13 +18,8 @@ namespace CJT {
             get { return entries; } //NEED to get DataTable and convert it to DbSet here.
             set { entries = value; }
         }
-
-        public override DbSet<Note> Notes { get; set; }
-        public override DbSet<Task> Tasks { get; set; }
-        public override DbSet<Tag> Tags { get; set; }
-        public override DbSet<Transaction> Transactions { get; set; }
-        public override DbSet<PartClass> Parts { get; set; }
-        public override DbSet<PartInstance> PartInstances { get; set; }
+        public override DbSet<Node> Nodes { get; set; }
+        public override DbSet<Relationship> Relationships { get; set; }
 
         public ExcelContext() {
             FilePath =

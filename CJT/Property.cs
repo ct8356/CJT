@@ -26,14 +26,18 @@ namespace CJT {
             //do nothing
         }
 
-        public Property(string name, object value, InfoType type, bool isVisible, DbContext dbContext) {
+        public Property(string name, object value, InfoType type, DbContext dbContext) {
             Name = name;
             Value = value;
             Type = type;
-            IsVisibleInEntryPanel = isVisible;
             IsVisibleInPropertyPanel = true;
             DbContext = dbContext;
             PropertyChanged += This_PropertyChanged;
+        }
+
+        public Property(string name, object value, InfoType type, bool isVisible, DbContext dbContext)
+            : this(name, value, type, dbContext) {
+            IsVisibleInEntryPanel = isVisible;
         }
 
         public void This_PropertyChanged(object sender, PropertyChangedEventArgs args) {

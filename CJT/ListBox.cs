@@ -8,6 +8,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.ComponentModel;
 using System.Windows;
+using CJT.ViewModels;
 
 namespace CJT {
     public class ListBox : System.Windows.Controls.ListBox {

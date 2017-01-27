@@ -18,7 +18,10 @@ namespace CJT {
             Background = new SolidColorBrush(Colors.LightGray);
             IsTextCompletionEnabled = true;
             //SUBSCRIBE
-            KeyUp += This_KeyUp;
+            //KeyUp += This_KeyUp;
+            //DO THIS where the autocompleteBox is used! 
+            //COZ not all uses of autoCompleteBox want to do something as soon as filled!
+            //NOTE: you should try FilterMode = Contains!
         }
 
         public void This_KeyUp(object sender, KeyEventArgs e) {

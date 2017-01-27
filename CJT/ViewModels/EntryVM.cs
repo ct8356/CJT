@@ -18,7 +18,6 @@ namespace CJT.ViewModels {
         //NOTE: MIGHT be able to make a generic version of this class,
         //BUT it is hard! lots of changing necessary.
         //TOO MUCH CHANGING considering how short on time I am!
-
         //NOTE: DataGrid AutoGenerateColumns will make a column
         //for every public property in this class.
         //BUT YO! I think the easiest way for NOW,
@@ -31,11 +30,10 @@ namespace CJT.ViewModels {
         //NEED TO GO FASTER NOW!!! OR WILL NEVER GET ANYWHERE! REALLY! 2 YEARS GONE!
         public ITreeVM TreeVM { get; set; }
         public Entry Entry { get; set; }
-        public DbContext DbContext { get; set; }
+        public DbContext DbContext { get; set; } //if override this, must have same type.
         public static ObservableCollection<object> Properties { get; set; }
         public ObservableCollection<Property> ImportantProperties { get; set; }
-        public ListBoxPanelVM<Tag> TagsVM { get; set; }
-        public EntryVM Parent { get; set; }
+        public ObservableCollection<EntryVM> Parents { get; set; }
         //NOTE! I think proper way to do this, is to just MODIFY the entry,
         //BUT because the the EntryVM is bound to it, it will update itself accordingly!
         //i.e. this entryVM just has a public Entry Parent.
@@ -45,9 +43,7 @@ namespace CJT.ViewModels {
         //DON'T want others adding to children. If I make it private, will that stop binding?
         //No, it won't, provided you KEEP this property public!!!
         //BUT problem is, then you can still add to Children...issue...
-        public ListBoxPanelVM<Tag> FilterTags { get; set; }
         public bool IsExpanded { get; set; }
-
         //SHOULD there be an option to emanciate??? (free from parent?)
 
         public EntryVM() {
@@ -55,15 +51,17 @@ namespace CJT.ViewModels {
             //NOTE: is this called? maybe. Even if it is, does not matter.
         }
 
-        public EntryVM(EntriesTreeVM treeVM) {
-            TreeVM = treeVM;
-            DbContext = treeVM.DbContext;
+        public EntryVM(ITreeVM treeVM) {
+            Entry = new Entry();
+            initialize(treeVM);
         }
 
-        protected void initialize(DbContext dbContext) {
-            DbContext = dbContext;
-            //DON'T NEED to instantiate Entry here,
-            //BECAUSE it is done in the class inheriting from EntryVM!
+        public EntryVM(Entry entry, ITreeVM treeVM) : this(treeVM) {
+            initialize(entry, treeVM);
+        }
+
+        protected void initialize() {
+            IsExpanded = true;
             //SUBSCRIBE
             Entry.PropertyChanged += Entry_PropertyChanged;
             PropertyChanged += EntryVM_PropertyChanged;
@@ -79,24 +77,34 @@ namespace CJT.ViewModels {
             //COZ only reason did it, was so did not have to PASS an EntryVM.
             //AND you could just make anything with lists attached,
             //an EntryVM. Or a ListAttachedObject...
+
+            //DON'T NEED to instantiate Entry here,
+            //BECAUSE it is done in the class inheriting from EntryVM!
+        }
+
+        protected void initialize(DbContext dbContext) {
+            DbContext = dbContext;
+            initialize();    
+        }
+
+        protected virtual void initialize(ITreeVM treeVM) {
+            TreeVM = treeVM;
+            DbContext = treeVM.DbContext;
+            initialize();
         }
 
         protected void initialize(Entry entry, DbContext dbContext) {
+            Entry = entry;
             initialize(dbContext);
+            Parents = new ObservableCollection<EntryVM>();
             Children = new ObservableCollection<EntryVM>();
-            bindToEntry(entry);
             //PROPERTIES
             initializePropertyList();
         }
 
-        protected void initialize(Entry entry, ITreeVM treeVM, DbContext dbContext) {
+        protected void initialize(Entry entry, ITreeVM treeVM) {
             TreeVM = treeVM;
-            FilterTags = treeVM.FilterPanelVM;
-            initialize(entry, dbContext);
-            //NOTE: don't HAVE to pass EntryVM a treeVM,
-            //AS LONG AS you don't use any methods REQUIRING one...
-            //OR FilterTags...
-            //potentially dangerous though? Ok sort it out later.
+            initialize(entry, treeVM.DbContext);
         }
 
         protected virtual void initializePropertyList() {
@@ -104,50 +112,60 @@ namespace CJT.ViewModels {
             ImportantProperties.Add(new Property("EntryID", Entry.EntryID, InfoType.TextBlock, false, DbContext));
             ImportantProperties.Add(new Property("CreationDate", Entry.CreationDate, InfoType.TextBlock, false, DbContext));
             ImportantProperties.Add(new Property("Name", Entry.Name, InfoType.TextBox, false, DbContext));
-            ImportantProperties.Add(new Property("Parent", Entry.Parent, InfoType.LinkedTextBlock, false, DbContext));
-            ImportantProperties.Add(new Property("Children", Children, InfoType.ListBox, false, DbContext));
-            ImportantProperties.Add(new Property("Tags", TagsVM, InfoType.ListBox, true, DbContext));
+        }
+
+        public EntryVM AddRelation(string relationName, Entry entry) {
+            Relationship relation = new Relationship(entry, Entry, relationName);
+            //NOTE: above adds itself to the entries 1 and 2.
+            DbContext.Relationships.Add(relation);
+            DbContext.SaveChanges();
+            return this;
+        }
+
+        public EntryVM AddRelations(string relationName, Entry[] entries) {
+            foreach (Entry entry in entries) {
+                Relationship relation = new Relationship(entry, Entry, relationName);
+                DbContext.Relationships.Add(relation);
+                Entry.ParentRelations.Add(relation);
+            }
+            DbContext.SaveChanges();
+            return this;
         }
 
         public void adoptChild(EntryVM childVM) {
-            //NOTE: This method should only be used if want to ADD children to ENTRY!!
-            Children.Add(childVM); //Does this do the trick? Yes it seems to...
-            childVM.Parent = this;
-            Entry.Children.Add(childVM.Entry);
-        }
+            Children.Add(childVM); 
+            childVM.Parents.Add(this); //Do this, just for view purposes.
+            //Entry.Children.Add(childVM.Entry); //Here is bit where must add relationship. (to database)
+            string relationName = TreeVM.StructurePanelVM.SelectedItem.ToString();
+            RelationshipVM rvm = new RelationshipVM(relationName, TreeVM);
+            (rvm.Entry as Relationship).ParentEntry = Entry;
+            (rvm.Entry as Relationship).ChildEntry = childVM.Entry;
+            //The new entry has ALREADY been added to db in NodeVM constructor,
+            //SO it makes sense to do the SAME when you create a new Relationship/VM!
+            //THEN changes get saved, in method that calls this method.
+        } //CURRENT
 
         public void adoptSibling(EntryVM entryVM) {
-            Parent.Children.Add(entryVM);
-            entryVM.Parent = Parent;
-            Parent.Entry.Children.Add(entryVM.Entry);
+            foreach (EntryVM parent in Parents) {
+                parent.Children.Add(entryVM);
+                entryVM.Parents.Add(parent);
+                parent.Entry.Children.Add(entryVM.Entry);
+            }
         }
 
         public void adoptChildFromTreeVM(EntryVM orphan) {
             Entry.Children.Add(orphan.Entry);
         }
 
-        public void bindToEntry(Entry entry) {
-            Entry = entry;
-            TagsVM = new ListBoxPanelVM<Tag>(this);
-            TagsVM.SelectableItems = TreeVM.AllTags;
-            TagsVM.SelectedItems = Entry.Tags; //YES! This actually seems to
-            //create a BINDING between ThisVM and the Entry.Tags!!!
-            //NOW bind to this, in the XAML!
-        }
-
         public void deleteEntry() {
-            if (Parent != null) {//IF it has a parent: delete self from children
-                Parent.Children.Remove(this);
-            }
-            else { //else delete self from FirstLevelVMs
-                TreeVM.FirstGenEntryVMs.Remove(this);
-            }
+            //DELETE ALL ITS RELATIONS FIRST!
+            DbContext.Relationships.RemoveRange(Entry.ParentRelations);
+            DbContext.Relationships.RemoveRange(Entry.ChildRelations);
+            DbContext.Entries.Remove(Entry); //hopefully intelligent enough to remove from subTable too.
             DbContext.SaveChanges(); //ALSO lazy. BUT more distributed!
             //Easier you just do these things, IN THE VIEWMODEL!
-            //TreeVM.ParentVM.UpdateEntries();
-            //REVISIT above it lazy, coz does whole tree, rather than just approp ones.
-            //BUT  ok for now.
-        }//REMEMBER in your extension Class, to remove it from DbContext.Entries!
+            TreeVM.ParentVM.UpdateEntries(); //Bit lazy
+        }
 
         public void EntryVM_PropertyChanged(object sender, PropertyChangedEventArgs args) {
             DbContext.SaveChanges(sender); //THIS clearly does NOTHING for excel. Yes really.
@@ -160,7 +178,7 @@ namespace CJT.ViewModels {
         }
 
         public void Entry_PropertyChanged(object sender, PropertyChangedEventArgs args) {
-            //DbContext.SaveChanges();
+            DbContext.SaveChanges();
             //THIS does not seem to get called, not sure why.
             //Never mind, just try with entryVM
             //AHAH! ITs obvious!
@@ -173,32 +191,27 @@ namespace CJT.ViewModels {
         }
 
         public virtual void insertEntry(EntryVM selectedVM) {
-            //Do nothing
+            //Do nothing (only here to be overridden.)
         }
 
         public void insertEntry(EntryVM entryVM, EntryVM selectedVM) {
-            if (Parent != null) {//IF it has a parent: make new one a sibling.
+            if (Parents != null) {//IF it has a parent: make new one a sibling.
                 adoptSibling(entryVM);
             }
             else { //else put it in FirstLevelVMs
                 TreeVM.FirstGenEntryVMs.Add(entryVM);
             }
-            foreach (Tag tag in FilterTags.SelectedItems) {
-                entryVM.Entry.Tags.Add(tag);
-            }
             DbContext.SaveChanges();
-            //ParentVM.updateEntries(); //not needed? shouldn't be. Not needed for inserting tags...
+            TreeVM.UpdateEntries(); //not needed? shouldn't be. Not needed for inserting tags...
         }
 
         public virtual void insertSubEntry(EntryVM selectedVM) {
-            //Do nothing
+            //Do nothing. (just here to be overriden by subclass)
+            //who creates a NodeVM, and passes it to method below.
         }
 
         public void insertSubEntry(EntryVM entryVM, EntryVM selectedVM) {
             adoptChild(entryVM);
-            foreach (Tag tag in FilterTags.SelectedItems) {
-                entryVM.Entry.Tags.Add(tag);
-            }
             DbContext.SaveChanges();
             //ParentVM.updateEntries(); //nec //is it though? well yes. Is there another way?
             //is entry.Children observable? Yes. BUT real issue is: is it adding a VM? No!
@@ -210,16 +223,16 @@ namespace CJT.ViewModels {
             return Entry.ToString();
         }
 
+        public void UpdateSelectedEntryVM(EntryVM entryVM) {
+            TreeVM.ParentVM.SelectedEntryVM = entryVM;
+        }
+
         public static EntryVM WrapInCorrectVM(Entry entry, ITreeVM treeVM) {
             EntryVM entryVM = null;
-            if (entry is PartClass)
-                entryVM = new PartClassVM(entry as PartClass, treeVM);
-            if (entry is PartInstance)
-                entryVM = new PartInstanceVM(entry as PartInstance, treeVM);
-            if (entry is Task)
-                entryVM = new TaskVM(entry as Task, treeVM);
-            if (entry is Tag)
-                entryVM = new TagVM(entry as Tag, treeVM);
+            if (entry is Node)
+                entryVM = new NodeVM(entry as Node, treeVM);
+            if (entry is Relationship)
+                entryVM = new RelationshipVM(entry as Relationship, treeVM);
             return entryVM;
         }
 

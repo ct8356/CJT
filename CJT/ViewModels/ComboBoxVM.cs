@@ -7,20 +7,22 @@ using CJT.Models;
 using CJT;
 
 namespace CJT.ViewModels {
-    public class ComboBoxVM {
-        public ObservableCollection<object> Objects { get; set; }
-        public object SelectedObject { get; set; }
-        public IMainVM VM { get; set; }
-
-        public ComboBoxVM(IMainVM parentVM) {
-            VM = parentVM;
+    public class ComboBoxVM : BaseClass {
+        public ObservableCollection<object> Items { get; set; }
+        private object selectedItem;
+        public object SelectedItem {
+            get { return selectedItem; }
+            set { selectedItem = value; NotifyPropertyChanged("SelectedItem"); }
+        }
+        private bool isApplied;
+        public bool IsApplied {
+            get { return isApplied; }
+            set { isApplied = value; NotifyPropertyChanged("IsApplied"); }
         }
 
-        public void updateSelectedObject(object selectedObject) {
-            SelectedObject = selectedObject;
-            VM.UpdateEntries();
+        public ComboBoxVM() {
+            Items = new ObservableCollection<object>();
         }
-
 
     }
 }
