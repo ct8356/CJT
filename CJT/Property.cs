@@ -17,6 +17,7 @@ namespace CJT {
         //If know it has an entry, can just cast it later.
         public InfoType Type { get; set; }
         public string Name { get; set; }
+        public bool IsSameTypeAsEntry { get; set; }
         public bool IsVisibleInEntryPanel { get; set; }
         public bool IsVisibleInPropertyPanel { get; set; }
         public object Value { get; set; }
@@ -26,11 +27,20 @@ namespace CJT {
             //do nothing
         }
 
-        public Property(string name, object value, InfoType type, DbContext dbContext) {
+        public Property(string name, InfoType type) {
             Name = name;
-            Value = value;
             Type = type;
             IsVisibleInPropertyPanel = true;
+        }
+
+        public Property(string name, InfoType type, bool isSameTypeAsEntry)
+            : this(name, type) {
+            IsSameTypeAsEntry = isSameTypeAsEntry;
+        }
+
+        public Property(string name, object value, InfoType type, DbContext dbContext)
+            : this(name, type) {
+            Value = value;
             DbContext = dbContext;
             PropertyChanged += This_PropertyChanged;
         }
@@ -48,8 +58,7 @@ namespace CJT {
         //make specific xaml templates that BIND to entry. NOT classes... ok, try it.
 
         public override string ToString() {
-            base.ToString(); //nec?
-            return Value.ToString();
+            return Name;
         } //Now, set dataGrid to Bind to the Property, and will get the Value!
 
     }

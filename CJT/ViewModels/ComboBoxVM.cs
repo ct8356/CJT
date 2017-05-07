@@ -8,12 +8,15 @@ using CJT;
 
 namespace CJT.ViewModels {
     public class ComboBoxVM : BaseClass {
+
         public ObservableCollection<object> Items { get; set; }
+
         private object selectedItem;
         public object SelectedItem {
             get { return selectedItem; }
             set { selectedItem = value; NotifyPropertyChanged("SelectedItem"); }
         }
+
         private bool isApplied;
         public bool IsApplied {
             get { return isApplied; }

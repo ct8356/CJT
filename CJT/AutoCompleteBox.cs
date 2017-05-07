@@ -12,6 +12,7 @@ using System.ComponentModel;
 
 namespace CJT {
     public class AutoCompleteBox : System.Windows.Controls.AutoCompleteBox {
+        public event EventHandler ReturnKeyUp;
 
         public AutoCompleteBox() {
             BorderBrush = new SolidColorBrush(Colors.LightGray);
@@ -27,6 +28,8 @@ namespace CJT {
         public void This_KeyUp(object sender, KeyEventArgs e) {
             if (e.Key == Key.Return) {
                 This_SelectionChanged(sender, e);
+                if (ReturnKeyUp != null)
+                    ReturnKeyUp(this, new EventArgs());
             }
         }
 

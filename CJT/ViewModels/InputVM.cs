@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using CJT.Models;
 
 namespace CJT.ViewModels {
-    public class InputVM<T> : BaseClass, INotifyInputConfirmed where T : Entry {
+    public class InputVM<T> : BaseClass, INotifyInputConfirmed where T : BaseEntry {
         public delegate void ObjectEventHandler(object sender, ObjectEventArgs<T> e);
         public event ObjectEventHandler InputConfirmed;
 

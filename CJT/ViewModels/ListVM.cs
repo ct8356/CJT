@@ -10,7 +10,7 @@ using System.Windows.Data;
 using CJT.Models;
 
 namespace CJT.ViewModels {
-    public class ListVM<T> : BaseClass, IListVM where T : Entry {
+    public class ListVM<T> : BaseClass, IListVM where T : BaseEntry {
         //NOTE, this class is not really necessary?
 
         private IList<T> items;

@@ -28,7 +28,7 @@ namespace CJT {
             //BUT the above way is also nice since it keeps it local. Do whatever.
             BorderBrush = new SolidColorBrush(Colors.LightGray);
             Background = new SolidColorBrush(Colors.LightGray);
-            Items.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
+            //Items.SortDescriptions.Add(new SortDescription("Title", ListSortDirection.Ascending));
             ContextMenu = new ContextMenu();
             MenuItem goTo = new MenuItem();
             ContextMenu.Items.Add(goTo); //PROBLEM! menu belongs to listBox, not ITEM!

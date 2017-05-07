@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace CJT {
     public interface INotifyInputConfirmed {
+
         void NotifyInputConfirmed(string input);
+
     }
 
 }

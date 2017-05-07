@@ -13,13 +13,6 @@ using CJT.Models;
 
 namespace CJT {
     public class ExcelContext : CJT.DbContext {
-        private DbSet<Entry> entries;
-        public override DbSet<Entry> Entries {
-            get { return entries; } //NEED to get DataTable and convert it to DbSet here.
-            set { entries = value; }
-        }
-        public override DbSet<Node> Nodes { get; set; }
-        public override DbSet<Relationship> Relationships { get; set; }
 
         public ExcelContext() {
             FilePath =

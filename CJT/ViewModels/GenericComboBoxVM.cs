@@ -14,16 +14,26 @@ namespace CJT.ViewModels {
         //BUT No, it NEEDS to have some methods that do stuff to data.
         //(EVEN if these methods are triggered by events, not called).
 
-        private ObservableCollection<T> objects;
-        public ObservableCollection<T> Objects {
-            get { return objects; }
-            set { objects = value; NotifyPropertyChanged("Objects"); }
+        private ObservableCollection<T> items;
+        public ObservableCollection<T> Items {
+            get { return items; }
+            set { items = value; NotifyPropertyChanged("Items"); }
         }
-        private T selectedObject;
 
-        public T SelectedObject{
-            get { return selectedObject; }
-            set { selectedObject = value; NotifyPropertyChanged("SelectedObject"); }
+        private T selectedItem;
+        public T SelectedItem {
+            get { return selectedItem; }
+            set { selectedItem = value; NotifyPropertyChanged("SelectedItem"); }
+        }
+
+        private bool isApplied;
+        public bool IsApplied {
+            get { return isApplied; }
+            set { isApplied = value; NotifyPropertyChanged("IsApplied"); }
+        }
+
+        public GenericComboBoxVM() {
+            Items = new ObservableCollection<T>();
         }
 
     }

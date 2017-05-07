@@ -11,9 +11,6 @@ using CJT.Models;
 
 namespace CJT {
     public class EFContext : DbContext {
-        public override DbSet<Entry> Entries { get; set; }
-        public override DbSet<Node> Nodes { get; set; }
-        public override DbSet<Relationship> Relationships { get; set; }
 
         public override string GetConnectionString() {
             return "";

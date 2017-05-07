@@ -13,9 +13,8 @@ namespace CJT {
     public abstract class DbContext : System.Data.Entity.DbContext {
         //NOTE: you SHOULD dispose of Context when no longer required (i.e. use using(){}).
         public event EventHandler TableChanged;
-        public abstract DbSet<Entry> Entries { get; set; }
-        public abstract DbSet<Node> Nodes { get; set; }
-        public abstract DbSet<Relationship> Relationships { get; set; }
+        //public abstract DbSet<Entry> Entries { get; set; } //SHOULD be in subclass!
+        //MAYBE need a generic DB context?
         public string FilePath { get; set; }
 
         public abstract string GetConnectionString();
